@@ -30,7 +30,8 @@ Slot CS1[100][20];
 Slot CS2[5][10];
 Slot CS3[10][10];
 
-void Random(Slot **,int,int);
+int Random(int , int );		//to Generate a random number of left and right
+void RandomSlot(Slot **,int,int);
 
 
 
@@ -39,12 +40,28 @@ void Random(Slot **,int,int);
 
 
 
+int Random(int m, int n){
+	srand((int)time(NULL));
+    int pos, dis;
+    if(m == n){
+		return m;
+	}
+	else if(m > n){
+		pos = n;
+		dis = m - n + 1;
+		return rand() % dis + pos;
+	}
+	else{
+		pos = m;
+		dis = n - m + 1;
+		return rand() % dis + pos;
+	}
+}
 
-void Random(Slot ** p,int mx,int my){
-	srand(time(0));
+void RandomSlot(Slot ** p,int mx,int my){
 	int x,y;
 	do{
-		x=0 + rand()%9;
-		y=0 + rand()%9;
+		x=Random(0,mx);
+		y=Random(0,my);
 	}while(p[x][y].ispark==1);
 }
