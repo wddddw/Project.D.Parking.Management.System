@@ -6,7 +6,7 @@
  */
 #include <cstdio>
 #include <string>
-#include <cstdio>
+#include <cstdlib>
 #include <ctime>
 using namespace std;
 #define MAXSIZE 8			//Max width of a car license
@@ -30,7 +30,7 @@ Slot CS1[100][20];
 Slot CS2[5][10];
 Slot CS3[10][10];
 
-void Random(Slot *,int,int);
+void Random(Slot **,int,int);
 
 
 
@@ -41,8 +41,10 @@ void Random(Slot *,int,int);
 
 
 void Random(Slot ** p,int mx,int my){
+	srand(time(0));
 	int x,y;
-	while(p[x][y].ispark==1){
-
-	}
+	do{
+		x=0 + rand()%9;
+		y=0 + rand()%9;
+	}while(p[x][y].ispark==1);
 }
