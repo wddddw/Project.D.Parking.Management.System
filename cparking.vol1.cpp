@@ -6,8 +6,11 @@
  */
 #include <cstdio>
 #include <string>
+#include <cstdio>
+#include <ctime>
 using namespace std;
 #define MAXSIZE 8			//Max width of a car license
+#define MAXCAR 2150
 
 struct Object{
 	int rank;				//Recording Level of the Customer
@@ -21,3 +24,25 @@ struct Slot{
 	bool ispark;			//Recording the status of the Slot
 };
 
+Object cars[MAXCAR];
+
+Slot CS1[100][20];
+Slot CS2[5][10];
+Slot CS3[10][10];
+
+void Random(Slot *,int,int);
+
+
+
+
+
+
+
+
+
+void Random(Slot ** p,int mx,int my){
+	int x,y;
+	while(p[x][y].ispark==1){
+
+	}
+}
