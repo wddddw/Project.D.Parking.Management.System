@@ -12,9 +12,10 @@
 using namespace std;
 #define MAXSIZE 8 //Max width of a car license
 #define MAXCAR 2150
+struct Customer;
 
 struct Object {
-	int rank; //Recording Level of the Customer
+	Customer * cust; //Recording Level of the Customer
 	char kind; //Recording the kind of the object
 	string license; //Recording the License of the Car or eBike
 	int place[3]; //[0] to Record CS[Where], [1] to Record x, [2] to Record y
@@ -25,6 +26,10 @@ struct Slot {
 	bool ispark; //Recording the status of the Slot
 };
 
+struct Customer {
+	char vip;
+};
+
 int carnum = 0;
 Object cars[MAXCAR];
 
@@ -32,14 +37,15 @@ Slot CS1[2000];
 Slot CS2[50];
 Slot CS3[100];
 
-string ADMINPASSWD="0";
+string ADMINPASSWD = "0";
+string ENTPASSWD = "0";
+string EXITPASSWD = "0";
 
 bool isFull(Slot *p, int, int); //to judge the Parking area if full
 int Random(int, int); //to Generate a random number between [a,b]
 void RandomSlot(Slot *p, int, int, int &, int &);
 int ParkIn(Object, Slot *p, int, int);
-int GoOut(Object, Slot,int,int);
-
+int GoOut(Object, Slot, int, int);
 
 void Welcome();
 void AdminLogin();
@@ -96,23 +102,14 @@ int ParkIn(Object temp, Slot *p, int mx, int my) {
 	}
 }
 
-int GoOut(Slot *p,int mx,int my,int x,int y){
-	p[my * x + y].ispark=0;
+int GoOut(Slot *p, int mx, int my, int x, int y) {
+	p[my * x + y].ispark = 0;
 	return 1;
 }
 
-
-
-
-
-
-
-
-
-
-void Welcome(){
+void Welcome() {
 	char c;
-	while(1){
+	while (1) {
 		system("cls");
 		printf("\t\t----Parking System---\n");
 		printf("\t1. Admin Login\n");
@@ -121,32 +118,42 @@ void Welcome(){
 		printf("\tq. Exit\n");
 		printf("\tPlease Choose: ");
 		setbuf(stdin, NULL);
-		scanf("%c",&c);
-		switch(c){
-		case '1':AdminLogin();break;
-		case '2':break;
-		case '3':break;
-		case 'q':return; break;
-		case 'Q':return; break;
-		default:break;
+		scanf("%c", &c);
+		switch (c) {
+		case '1':
+			AdminLogin();
+			break;
+		case '2':
+			break;
+		case '3':
+			break;
+		case 'q':
+			return;
+			break;
+		case 'Q':
+			return;
+			break;
+		default:
+			break;
 		}
 	}
 }
 
-void AdminLogin(){
+void AdminLogin() {
 	string temp;
-	for(int i=0;i<3;i++){
+	for (int i = 0; i < 3; i++) {
 		system("cls");
 		printf("Please Input Admin Password: ");
-		cin>>temp;
-		if(temp==ADMINPASSWD){
+		cin >> temp;
+		if (temp == ADMINPASSWD) {
 			Admin();
 			return;
-		}
-		else{
-			if(i==1)printf("Input Error, You have %d time to try!\n",2-i);
-			else{
-				if(i!=2) printf("Input Error, You have %d times to try!\n",2-i);
+		} else {
+			if (i == 1)
+				printf("Input Error, You have %d time to try!\n", 2 - i);
+			else {
+				if (i != 2)
+					printf("Input Error, You have %d times to try!\n", 2 - i);
 			}
 			system("pause");
 		}
@@ -154,10 +161,10 @@ void AdminLogin(){
 	return;
 }
 
-void Admin(){
+void Admin() {
 	system("cls");
 	char c;
-	while(1){
+	while (1) {
 		printf("\t\t----Parking System(Admin)---\n");
 		printf("\t1. Function1\n");
 		printf("\t2. Function2\n");
@@ -165,29 +172,40 @@ void Admin(){
 		printf("\tq. Exit\n");
 		printf("\tPlease Choose: ");
 		setbuf(stdin, NULL);
-		scanf("%c",&c);
-		switch(c){
-		case '1':break;
-		case '2':break;
-		case '3':break;
-		case 'p':ChangeAdminPasswd();break;
-		case 'q':return; break;
-		case 'Q':return; break;
-		default:break;
+		scanf("%c", &c);
+		switch (c) {
+		case '1':
+			break;
+		case '2':
+			break;
+		case '3':
+			break;
+		case 'p':
+			ChangeAdminPasswd();
+			break;
+		case 'q':
+			return;
+			break;
+		case 'Q':
+			return;
+			break;
+		default:
+			break;
 		}
 	}
 	system("pause");
 }
 
-void ChangeAdminPasswd(){
-	string temp1,temp2;
+void ChangeAdminPasswd() {
+	string temp1, temp2;
 	system("cls");
 	printf("Please Input the New Password: \n");
-	cin>>temp1;
+	cin >> temp1;
 	printf("Please Input Again: \n");
-	cin>>temp2;
-	if(temp1==temp2)ADMINPASSWD=temp2;
-	else{
+	cin >> temp2;
+	if (temp1 == temp2)
+		ADMINPASSWD = temp2;
+	else {
 		system("cls");
 		printf("Not Matched! \n");
 	}
@@ -198,17 +216,15 @@ int main() {
 	int t_num = 0;
 	Welcome();
 	Object temp;
-	temp.kind = 'c';
 	temp.license = "wwyydd";
 	temp.place[0] = 1;
-	temp.rank = 1;
 	//Test parking
 	/*
-	while (ParkIn(temp, CS1, 100, 20) != -1) {
-		t_num++;
-		printf("%d\n", t_num);
-	}
-	printf("%d\n", t_num);
-	*/
+	 while (ParkIn(temp, CS1, 100, 20) != -1) {
+	 t_num++;
+	 printf("%d\n", t_num);
+	 }
+	 printf("%d\n", t_num);
+	 */
 	system("pause");
 }
