@@ -30,8 +30,9 @@ Slot CS1[100][20];
 Slot CS2[5][10];
 Slot CS3[10][10];
 
-int Random(int , int );		//to Generate a random number of left and right
-void RandomSlot(Slot **,int,int);
+bool ifFull(Slot **,int,int);	//to judge the Parking area if full
+int Random(int , int );		//to Generate a random number between [a,b]
+void RandomSlot(Slot **,int,int,int &,int &);
 
 
 
@@ -39,6 +40,14 @@ void RandomSlot(Slot **,int,int);
 
 
 
+bool isFull(Slot **p,int mx,int my){
+	for(int i=0;i<mx;i++){
+		for(int j=0;i<my;i++){
+			if(p[i][j].ispark==0) return 0;
+		}
+	}
+	return 1;
+}
 
 int Random(int m, int n){
 	srand((int)time(NULL));
@@ -58,10 +67,12 @@ int Random(int m, int n){
 	}
 }
 
-void RandomSlot(Slot ** p,int mx,int my){
+void RandomSlot(Slot ** p,int mx,int my,int & outx,int & outy){
 	int x,y;
 	do{
 		x=Random(0,mx);
 		y=Random(0,my);
 	}while(p[x][y].ispark==1);
+	outx=x;
+	outy=y;
 }
