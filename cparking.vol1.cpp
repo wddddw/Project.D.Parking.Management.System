@@ -12,10 +12,8 @@
 using namespace std;
 #define MAXSIZE 8 //Max width of a car license
 #define MAXCAR 2150
-struct Customer;
 
 struct Object {
-	Customer * cust; //Recording Level of the Customer
 	char kind; //Recording the kind of the object
 	string license; //Recording the License of the Car or eBike
 	int place[3]; //[0] to Record CS[Where], [1] to Record x, [2] to Record y
@@ -27,7 +25,10 @@ struct Slot {
 };
 
 struct Customer {
-	char vip;
+	string name;
+	string address;
+	char level;			//Level 't' is teacher, level 's' is student , 'v' is visitor
+	Object tool;		//Customer own a car
 };
 
 int carnum = 0;
@@ -41,6 +42,8 @@ string ADMINPASSWD = "0";
 string ENTPASSWD = "0";
 string EXITPASSWD = "0";
 
+double CHARGETABLE[3];
+
 bool isFull(Slot *p, int, int); //to judge the Parking area if full
 int Random(int, int); //to Generate a random number between [a,b]
 void RandomSlot(Slot *p, int, int, int &, int &);
@@ -51,6 +54,7 @@ void Welcome();
 void AdminLogin();
 void Admin();
 void ChangeAdminPasswd();
+void SetChargeTable();
 
 bool isFull(Slot *p, int mx, int my) {
 	for (int i = 0; i < mx * my; i++)
@@ -162,14 +166,14 @@ void AdminLogin() {
 }
 
 void Admin() {
-	system("cls");
 	char c;
 	while (1) {
+		system("cls");
 		printf("\t\t----Parking System(Admin)---\n");
 		printf("\t1. Function1\n");
-		printf("\t2. Function2\n");
+		printf("\t2. Set Charge Table\n");
 		printf("\tp. Change Password\n");
-		printf("\tq. Exit\n");
+		printf("\tq. Admin Exit\n");
 		printf("\tPlease Choose: ");
 		setbuf(stdin, NULL);
 		scanf("%c", &c);
@@ -177,6 +181,7 @@ void Admin() {
 		case '1':
 			break;
 		case '2':
+			SetChargeTable();
 			break;
 		case '3':
 			break;
@@ -212,8 +217,57 @@ void ChangeAdminPasswd() {
 	return;
 }
 
+void SetChargeTable() {
+	int area;
+	double charge;
+	system("cls");
+	printf("Please Select Which Area to Change (1 is CS1,2 is CS2,3 is CS3):");
+	setbuf(stdin, NULL);
+	scanf("%d",&area);
+	if(area<1||area>3){
+		system("cls");
+		printf("Error!");
+		system("pause");
+		SetChargeTable();
+	}
+	else{
+		system("cls");
+		printf("Please input the Charge of CS%d: ",area);
+		setbuf(stdin, NULL);
+		scanf("%lf",&charge);
+		switch(area){
+		case 1:
+			if(charge>CHARGETABLE[1]) CHARGETABLE[0]=charge;
+			else{
+				system("cls");
+				printf("Error!");
+				system("pause");
+			}
+			break;
+		case 2:
+			if(charge>CHARGETABLE[2]&&charge<CHARGETABLE[0]) CHARGETABLE[1]=charge;
+			else{
+				system("cls");
+				printf("Error!");
+				system("pause");
+			}
+			break;
+		case 3:
+			if(charge<CHARGETABLE[1]) CHARGETABLE[2]=charge;
+			else{
+				system("cls");
+				printf("Error!");
+				system("pause");
+			}
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 int main() {
-	int t_num = 0;
+//	int t_num = 0;
 	Welcome();
 	Object temp;
 	temp.license = "wwyydd";
