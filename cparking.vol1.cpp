@@ -2,7 +2,8 @@
  * cparking.vol1.cpp
  *
  * Created on: 2014.11.27
- * Author: WDD
+ * Author: WDD(SCST HBU)
+ * School of Computer Science and Technology, Hebei University
  */
 #include <cstdio>
 #include <iostream>
@@ -40,6 +41,13 @@ Slot CS1[2000];
 Slot CS2[50];
 Slot CS3[100];
 
+const int CS1WIDTH=100;
+const int CS1LENGTH=20;
+const int CS2WIDTH=5;
+const int CS2LENGTH=10;
+const int CS3WIDTH=10;
+const int CS3LENGTH=10;
+
 string ADMINPASSWD = "0";
 string ENTPASSWD = "0";
 string EXITPASSWD = "0";
@@ -48,6 +56,7 @@ Customer CUST[MAXCUST];
 int custnum = 0;
 
 double CHARGETABLE[3];
+double TEACHERDISCOUNT;
 
 bool isFull(Slot *p, int, int); //to judge the Parking area if full
 int Random(int, int); //to Generate a random number between [a,b]
@@ -56,12 +65,26 @@ int ParkIn(Object, Slot *p, int, int);
 int GoOut(Object, Slot, int, int);
 
 void Welcome();
+
+//Functions of Admin Login Mod
 void AdminLogin();
 void Admin();
 void ChangeAdminPasswd();
 void SetChargeTable();
 void CreateAnAccount();
 void SetObject(Object &);
+
+//Functions of Enterance Desk Mod
+void EnterLogin();
+void Enter();
+void ObjectIn();
+void AccountIn();
+void GuestIn();
+void ChangeEntrancePasswd();
+
+//Functions of Exit Desk Mod
+void ExitLogin();
+void Exit();
 
 bool isFull(Slot *p, int mx, int my) {
 	for (int i = 0; i < mx * my; i++)
@@ -135,6 +158,7 @@ void Welcome() {
 			AdminLogin();
 			break;
 		case '2':
+			EnterLogin();
 			break;
 		case '3':
 			break;
@@ -274,6 +298,10 @@ void SetChargeTable() {
 			break;
 		}
 	}
+	system("cls");
+	printf("Please input the Discount of the Teacher: ");
+	setbuf(stdin, NULL);
+	scanf("%lf", &TEACHERDISCOUNT);
 }
 
 void CreateAnAccount() {
@@ -285,8 +313,10 @@ void CreateAnAccount() {
 	system("cls");
 	printf("\t\t---Create Account--\n");
 	printf("Please input Username: ");
+	setbuf(stdin, NULL);
 	cin >> name;
 	printf("Pless input user %s's Address: ", name.c_str());
+	setbuf(stdin, NULL);
 	cin >> address;
 	setbuf(stdin, NULL);
 	system("cls");
@@ -315,19 +345,21 @@ void CreateAnAccount() {
 	temp.level = level;
 	temp.address = address;
 	SetObject(tool);
+	temp.tool=tool;
 	tool.cust = &temp;
 	CUST[custnum] = temp;
+	system("pause");
 	custnum++;
 }
 
 void SetObject(Object & obj) {
 	string licence;
-	setbuf(stdin, NULL);
 	system("cls");
 	printf("\t\t---Please Choose the Kind of the Vehicle---\n");
 	printf("\tc.Car.\n");
 	printf("\te.e-Bike.\n");
 	char c;
+	setbuf(stdin, NULL);
 	scanf("%c", &c);
 	switch (c) {
 	case 'c':
@@ -338,7 +370,7 @@ void SetObject(Object & obj) {
 		break;
 	default:
 		printf("error!");
-		return;
+		system("pause");
 		break;
 	}
 	setbuf(stdin, NULL);
@@ -346,6 +378,171 @@ void SetObject(Object & obj) {
 	printf("Input the licence:");
 	cin >> licence;
 	obj.license = licence;
+}
+
+
+
+
+
+
+
+
+
+void EnterLogin(){
+	string temp;
+	for (int i = 0; i < 3; i++) {
+		system("cls");
+		printf("Please Input Enter Password: ");
+		cin >> temp;
+		if (temp == ENTPASSWD) {
+			Enter();
+			return;
+		} else {
+			if (i == 1)
+				printf("Input Error, You have %d time to try!\n", 2 - i);
+			else {
+				if (i != 2)
+					printf("Input Error, You have %d times to try!\n", 2 - i);
+			}
+			system("pause");
+		}
+	}
+	return;
+}
+
+void Enter(){
+	char c;
+	while (1) {
+		system("cls");
+		printf("\t\t----Parking System(Enterance Desk)---\n");
+		printf("\t1. Vehicle In\n");
+		printf("\tp. Change Password\n");
+		printf("\tq. Enterance Exit\n");
+		printf("\tPlease Choose: ");
+		setbuf(stdin, NULL);
+		scanf("%c", &c);
+		switch (c) {
+		case '1':ObjectIn();
+			break;
+		case 'p':ChangeEntrancePasswd();
+			break;
+		case 'q':
+			return;
+			break;
+		case 'Q':
+			return;
+			break;
+		default:
+			break;
+		}
+	}
+	system("pause");
+}
+
+void ObjectIn(){
+	char c;
+	while(1){
+		system("cls");
+		setbuf(stdin, NULL);
+		printf("\t\t---Way to Enter---\n");
+		printf("\ta. Account\n");
+		printf("\tb. Guest\n");
+		printf("Please Choose: ");
+		scanf("%c",&c);
+		switch(c){
+		case 'a':
+			AccountIn();
+			return;
+			break;
+		case 'b':
+			GuestIn();
+			return;
+			break;
+		default:printf("\nError!");system("pause");break;
+		}
+	}
+}
+
+void AccountIn(){
+	string acc;
+	int flag=-1;
+	while(flag==-1){
+		system("cls");
+		setbuf(stdin, NULL);
+		printf("Please Enter Your Account Name:");
+		cin>>acc;
+		for(int i=0;i<custnum;i++){
+			if(acc==CUST[i].name){
+				flag=i;
+				break;
+			}
+		}
+		if(flag==-1){
+			printf("Account Not Found, Please reEnter");
+			system("pause");
+		}
+	}
+	if(CUST[flag].tool.kind=='c'){
+		ParkIn(CUST[flag].tool,CS1,CS1LENGTH,CS1WIDTH);
+		printf("Parkin Success!");
+	}
+	if(CUST[flag].tool.kind=='e'){
+		char c;
+		while(c!='2'&&c!='3'){
+			system("cls");
+			setbuf(stdin, NULL);
+			printf("Please Choose Which Parking Space(2 for CS2, 3 for CS3):");
+			scanf("%c",&c);
+			switch(c){
+			case'2':ParkIn(CUST[flag].tool,CS2,CS2LENGTH,CS2WIDTH);break;
+			case'3':ParkIn(CUST[flag].tool,CS3,CS3LENGTH,CS3WIDTH);break;
+			default:printf("\nError!");system("pause");break;
+			}
+		}
+		printf("Parking Success!");
+		system("pause");
+	}
+}
+
+void GuestIn(){
+	bool flag=1;
+	char c;
+	string lic;
+	Object temp;
+	while(flag){
+		system("cls");
+		setbuf(stdin, NULL);
+		printf("Please Enter the Vehicle type(c for Car, e for eBike):");
+		scanf("%c",&c);
+		switch(c){
+		case 'c':temp.kind=c;flag=0;break;
+		case 'e':temp.kind=c;flag=0;break;
+		default:printf("\nError!");system("pause");break;
+		}
+	}
+	system("cls");
+	setbuf(stdin, NULL);
+	printf("Please Enter The Licence: ");
+	cin>>lic;
+	temp.license=lic;
+	temp.cust=NULL;
+	if(temp.kind=='c'){
+		ParkIn(temp,CS1,CS1LENGTH,CS1WIDTH);
+	}
+	else{
+		char c;
+		while(1){
+			system("cls");
+			setbuf(stdin, NULL);
+			printf("Please Choose Which Parking Space(2 for CS2, 3 for CS3):");
+			scanf("%c",&c);
+			switch(c){
+			case'2':ParkIn(temp,CS2,CS2LENGTH,CS2WIDTH);break;
+			case'3':ParkIn(temp,CS3,CS3LENGTH,CS3WIDTH);break;
+			default:printf("\nError!");system("pause");break;
+			}
+		}
+	}
 }
 
 void ChangeEntrancePasswd() {
@@ -360,6 +557,7 @@ void ChangeEntrancePasswd() {
 	else {
 		system("cls");
 		printf("Not Matched! \n");
+		system("pause");
 	}
 	return;
 }
