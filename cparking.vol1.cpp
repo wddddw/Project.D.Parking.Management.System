@@ -2,8 +2,8 @@
  * cparking.vol1.cpp
  *
  * Created on: 2014.11.27
- * Author: WDD(SCST HBU)
- * School of Computer Science and Technology, Hebei University
+ * Author: Team WL
+ * Release: WDD@SCST
  */
 #include <cstdio>
 #include <iostream>
@@ -11,10 +11,7 @@
 #include <cstdlib>
 #include <ctime>
 using namespace std;
-#define MAXSIZE 8 //Max width of a car license#define MAXCAR 2150#define MAXCUST 10000struct Customer;
-
-struct Object {
-	Customer * cust;
+#define MAXSIZE 8 //Max width of a car license#define MAXCAR 2150#define MAXCUST 10000struct Customer;struct Object {	Customer * cust;
 	char kind; //Recording the kind of the object
 	string license; //Recording the License of the Car or eBike
 	int place[3]; //[0] to Record CS[Where], [1] to Record x, [2] to Record y
@@ -92,167 +89,6 @@ void AccountOut();
 void GuestOut();
 
 /*
- * Exit Desk Mod Start
- */
-
-void ExitLogin() {
-	string temp;
-	for (int i = 0; i < 3; i++) {
-		system("cls");
-		printf("Please Input Exit Desk Password: ");
-		cin >> temp;
-		if (temp == EXITPASSWD) {
-			Exit();
-			return;
-		} else {
-			if (i == 1)
-				printf("Input Error, You have %d time to try!\n", 2 - i);
-			else {
-				if (i != 2)
-					printf("Input Error, You have %d times to try!\n", 2 - i);
-			}
-			system("pause");
-		}
-	}
-	return;
-}
-
-void Exit() {
-	char c;
-	while (1) {
-		system("cls");
-		printf("\t\t----Parking System(Exit Desk)---\n");
-		printf("\t1. Vehicle Out\n");
-		printf("\tp. Change Password\n");
-		printf("\tq. Enterance Exit\n");
-		printf("\tPlease Choose: ");
-		setbuf(stdin, NULL);
-		scanf("%c", &c);
-		switch (c) {
-		case '1':
-			LetObjectOut();
-			break;
-		case 'p':
-			ChangeExitPasswd();
-			break;
-		case 'q':
-			return;
-			break;
-		case 'Q':
-			return;
-			break;
-		default:
-			break;
-		}
-	}
-	system("pause");
-}
-
-void ChangeExitPasswd() {
-	string temp1, temp2;
-	system("cls");
-	printf("Please Input the New Password: \n");
-	cin >> temp1;
-	printf("Please Input Again: \n");
-	cin >> temp2;
-	if (temp1 == temp2)
-		EXITPASSWD = temp2;
-	else {
-		system("cls");
-		printf("Not Matched! \n");
-	}
-	return;
-}
-
-void LetObjectOut() {
-	char c = 0;
-	while (c != 'a' && c != 'b') {
-		system("cls");
-		setbuf(stdin, NULL);
-		printf("\t\t---You have account or Guest---\n");
-		printf("\ta. Account\n");
-		printf("\tb. Guest\n");
-		printf("Please Choose: ");
-		scanf("%c", &c);
-		switch (c) {
-		case 'a':
-			AccountOut();
-			return;
-			break;
-		case 'b':
-			GuestOut();
-			return;
-			break;
-		default:
-			printf("\nError!");
-			system("pause");
-			break;
-		}
-	}
-}
-
-void AccountOut() {
-	string acc;
-	double paypal;
-	int flag = -1;
-	while (flag == -1) {
-		system("cls");
-		setbuf(stdin, NULL);
-		printf("Please Enter Your Account Name:");
-		cin >> acc;
-		for (int i = 0; i < custnum; i++) {
-			if (acc == CUST[i].name) {
-				flag = i;
-				break;
-			}
-		}
-		if (flag == -1) {
-			printf("Account Not Found, Please reEnter");
-			system("pause");
-		}
-	}
-	if (CUST[flag].tool.kind == 'c') {
-		GoOut(CS1, CS1WIDTH, CS1LENGTH, CUST[flag].tool.place[1],
-				CUST[flag].tool.place[2]);
-	}
-	if (CUST[flag].tool.kind == 'e') {
-		switch (CUST[flag].tool.place[0]) {
-		case 2:
-			GoOut(CS2, CS2WIDTH, CS2LENGTH, CUST[flag].tool.place[1],
-					CUST[flag].tool.place[2]);
-			break;
-		case 3:
-			GoOut(CS3, CS3WIDTH, CS3LENGTH, CUST[flag].tool.place[1],
-					CUST[flag].tool.place[2]);
-			break;
-		default:
-			break;
-		}
-	}
-	switch (CUST[flag].level) {
-	case 't':
-		paypal = CHARGETABLE[CUST[flag].tool.place[0] - 1] * TEACHERDISCOUNT;
-		break;
-	case 's':
-		paypal = CHARGETABLE[CUST[flag].tool.place[0] - 1] * STUDENTDISCOUNT;
-		break;
-	case 'v':
-		paypal = CHARGETABLE[CUST[flag].tool.place[0] - 1];
-		break;
-	}
-	cout << "The Charge is $" << paypal << "!" << endl;
-	system("pause");
-}
-
-void GuestOut() {
-
-}
-
-/*
- * Exit Desk Mod End
- */
-
-/*
  * Basic Function Start
  */
 bool isFull(Slot *p, int mx, int my) {
@@ -306,7 +142,17 @@ int ParkIn(Object &temp, Slot *p, int mx, int my) {
 }
 
 int GoOut(Slot *p, int mx, int my, int x, int y) {
+	int tmp = 0;
 	p[my * x + y].ispark = 0;
+	for (int i = 0; i < carnum; i++) {
+		if (cars[i].place[1] == x && cars[i].place[2] == y) {
+			tmp = i;
+			break;
+		}
+	}
+	for (int i = tmp; i < carnum - 1; i++) {
+		cars[i] = cars[i + 1];
+	}
 	carnum--;
 	return 1;
 }
@@ -783,6 +629,207 @@ void ChangeEntrancePasswd() {
 
 /*
  * Enterance Desk Mod End
+ */
+
+/*
+ * Exit Desk Mod Start
+ */
+
+void ExitLogin() {
+	string temp;
+	for (int i = 0; i < 3; i++) {
+		system("cls");
+		printf("Please Input Exit Desk Password: ");
+		cin >> temp;
+		if (temp == EXITPASSWD) {
+			Exit();
+			return;
+		} else {
+			if (i == 1)
+				printf("Input Error, You have %d time to try!\n", 2 - i);
+			else {
+				if (i != 2)
+					printf("Input Error, You have %d times to try!\n", 2 - i);
+			}
+			system("pause");
+		}
+	}
+	return;
+}
+
+void Exit() {
+	char c;
+	while (1) {
+		system("cls");
+		printf("\t\t----Parking System(Exit Desk)---\n");
+		printf("\t1. Vehicle Out\n");
+		printf("\tp. Change Password\n");
+		printf("\tq. Exit Desk Exit\n");
+		printf("\tPlease Choose: ");
+		setbuf(stdin, NULL);
+		scanf("%c", &c);
+		switch (c) {
+		case '1':
+			LetObjectOut();
+			break;
+		case 'p':
+			ChangeExitPasswd();
+			break;
+		case 'q':
+			return;
+			break;
+		case 'Q':
+			return;
+			break;
+		default:
+			break;
+		}
+	}
+	system("pause");
+}
+
+void ChangeExitPasswd() {
+	string temp1, temp2;
+	system("cls");
+	printf("Please Input the New Password: \n");
+	cin >> temp1;
+	printf("Please Input Again: \n");
+	cin >> temp2;
+	if (temp1 == temp2)
+		EXITPASSWD = temp2;
+	else {
+		system("cls");
+		printf("Not Matched! \n");
+	}
+	return;
+}
+
+void LetObjectOut() {
+	char c = 0;
+	while (c != 'a' && c != 'b') {
+		system("cls");
+		setbuf(stdin, NULL);
+		printf("\t\t---You have account or Guest---\n");
+		printf("\ta. Account\n");
+		printf("\tb. Guest\n");
+		printf("Please Choose: ");
+		scanf("%c", &c);
+		switch (c) {
+		case 'a':
+			AccountOut();
+			return;
+			break;
+		case 'b':
+			GuestOut();
+			return;
+			break;
+		default:
+			printf("\nError!");
+			system("pause");
+			break;
+		}
+	}
+}
+
+void AccountOut() {
+	string acc;
+	double paypal;
+	int flag = -1;
+	while (flag == -1) {
+		system("cls");
+		setbuf(stdin, NULL);
+		printf("Please Enter Your Account Name:");
+		cin >> acc;
+		for (int i = 0; i < custnum; i++) {
+			if (acc == CUST[i].name) {
+				for (int j = 0; i < carnum; j++) {
+					if (CUST[i].tool.license == cars[j].license) {
+						flag = i;
+						break;
+					}
+				}
+				break;
+			}
+		}
+		if (flag == -1) {
+			printf("Car Not Found, Please reEnter");
+			system("pause");
+			return;
+		}
+	}
+	if (CUST[flag].tool.kind == 'c') {
+		GoOut(CS1, CS1WIDTH, CS1LENGTH, CUST[flag].tool.place[1],
+				CUST[flag].tool.place[2]);
+	}
+	if (CUST[flag].tool.kind == 'e') {
+		switch (CUST[flag].tool.place[0]) {
+		case 2:
+			GoOut(CS2, CS2WIDTH, CS2LENGTH, CUST[flag].tool.place[1],
+					CUST[flag].tool.place[2]);
+			break;
+		case 3:
+			GoOut(CS3, CS3WIDTH, CS3LENGTH, CUST[flag].tool.place[1],
+					CUST[flag].tool.place[2]);
+			break;
+		default:
+			break;
+		}
+	}
+	switch (CUST[flag].level) {
+	case 't':
+		paypal = CHARGETABLE[CUST[flag].tool.place[0] - 1] * TEACHERDISCOUNT;
+		break;
+	case 's':
+		paypal = CHARGETABLE[CUST[flag].tool.place[0] - 1] * STUDENTDISCOUNT;
+		break;
+	case 'v':
+		paypal = CHARGETABLE[CUST[flag].tool.place[0] - 1];
+		break;
+	}
+	cout << "The Charge is $" << paypal << "!" << endl;
+	system("pause");
+}
+
+void GuestOut() {
+	string lic;
+	char c;
+	int flag = -1;
+	printf(
+			"Please Choose Your Parking Slot(1 for cs1, 2 for cs2, 3 for cs3): ");
+	setbuf(stdin, NULL);
+	scanf("%c", &c);
+	printf("Please Input Your Vehicle's License:");
+	setbuf(stdin, NULL);
+	cin >> lic;
+	for (int i = 0; i < carnum; i++) {
+		if (cars[i].license == lic) {
+			flag = i;
+			break;
+		}
+	}
+	if (flag != -1) {
+		if (c == '1') {
+			GoOut(CS1, CS1WIDTH, CS1LENGTH, cars[flag].place[1],
+					cars[flag].place[2]);
+		} else if (c == '2') {
+			GoOut(CS2, CS2WIDTH, CS2LENGTH, cars[flag].place[1],
+					cars[flag].place[2]);
+		} else if (c == '3') {
+			GoOut(CS3, CS3WIDTH, CS3LENGTH, cars[flag].place[1],
+					cars[flag].place[2]);
+		}
+		printf("The Charge is $%.0lf!\n", CHARGETABLE[cars[flag].place[0] - 1]);
+		printf("Thank U for Your Visiting!");
+		system("pause");
+	} else {
+		printf("Input Error!");
+		system("pause");
+		return;
+	}
+}
+
+/*
+ * Exit Desk Mod End
  */
 
 int main() {
